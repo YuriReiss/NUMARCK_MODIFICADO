@@ -2093,7 +2093,7 @@ int simple_grouping_prediction(struct t_center_element *t_center,int total_num,i
 	min_B = 1;
 
 	if(DEBUG && rank==0)
-		printf("B = 1 length = %ld, compressible num = %ld ,incompress = %ld index table  size =  %ld\n",min_length,already_compressed_num,(long long)(g_data_array_row_num - already_compressed_num),(long long)(g_data_array_row_num*1/8));
+		printf("B = 1 length = %lld, compressible num = %d ,incompress = %lld index table  size =  %ld\n",min_length,already_compressed_num,(long long)(g_data_array_row_num - already_compressed_num),(long long)(g_data_array_row_num*1/8));
 
 	// calc the smallest NUMARCK file size
 
@@ -2109,7 +2109,7 @@ int simple_grouping_prediction(struct t_center_element *t_center,int total_num,i
 
 		if(DEBUG && rank==0)
 		{
-			printf("B = %ld length = %ld, compressible num = %ld ,incompress = %ld index table  size =  %ld\n",i,length,compressible_data_num,(g_data_array_row_num - compressible_data_num)*8,(long)(g_data_array_row_num*i/8));
+			printf("B = %d length = %lld, compressible num = %lld ,incompress = %lld index table  size =  %ld\n",i,length,compressible_data_num,(g_data_array_row_num - compressible_data_num)*8,(long)(g_data_array_row_num*i/8));
 		}
 
 

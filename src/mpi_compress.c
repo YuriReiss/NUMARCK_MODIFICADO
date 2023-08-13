@@ -430,9 +430,7 @@ int main(int argc,char *argv[])
 #endif
 	}
 	timing[7] = MPI_Wtime() - timing[7];
-
-	printf("PASSSSSOU TUDO\n");
-
+	
 	double max_timing[32];
 
 	timing[8] = data_array_row_num;
@@ -447,32 +445,7 @@ int main(int argc,char *argv[])
 
 	if(rank==0)
 	{
-//		printf("ave_ratio_error: %Lf\n",ave_ratio_error); this is for DEBUG
-		printf("zlib compression ratio: %Lf\n",zlib_compression_ratio);
-		printf("read file time: %f\n",max_timing[0]);
-		printf("calc change ratio time: %f\n",max_timing[1]);
 		printf("bining time: %f\n",max_timing[2]);
-		printf("assig index time: %f\n",max_timing[3]);
-		printf("trans index time: %f\n",max_timing[4]);
-		printf("bits opt time: %f\n",max_timing[5]);
-		printf("zlib time: %f\n",max_timing[6]);
-		printf("write file time: %f\n",max_timing[7]);
-
-		printf("compression ratio: %f\n",(double)total_raw_file_size/(double)last_file_size);
-//		printf("%ld\n",init_bin_time);
-//		printf("%ld\n",top_k_selection_time);
-
-//		printf("element max = %f   min = %f\n",max_timing[8],-1.0*max_timing[9]);
-//		printf("block max = %f   min = %f\n",max_timing[10],-1.0*max_timing[11]);
-
-//		printf("calc max & min = %f\n",max_timing[16]);
-//		printf("construct local hist = %f\n",max_timing[17]);
-//		printf("global hist reduction = %f\n",max_timing[18]);
-//		printf("top-k selection = %f\n",max_timing[19]);
-//		printf("prediction = %f\n",max_timing[20]);
-//		printf("new cluster set up = %f\n",max_timing[21]);
-//		printf("update memship = %f\n",max_timing[22]);
-
 	}
 
 	free_all();

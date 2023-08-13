@@ -381,10 +381,11 @@ int main(int argc,char *argv[])
 
 
 	/* phase 3: indexing: assign index to each data point */
-	MPI_Barrier(MPI_COMM_WORLD);
+	/**MPI_Barrier(MPI_COMM_WORLD);
 	timing[3] = MPI_Wtime();
 	assign_index(E);
-	timing[3] = MPI_Wtime() - timing[3];
+	timing[3] = MPI_Wtime() - timing[3];*/
+
 
 //	free(change_ratio_flag_array);
 	free(t_change_ratio_array);
@@ -393,23 +394,26 @@ int main(int argc,char *argv[])
 	free(data_array2);
 
 	/* phase 3: indexing: exchange index with neighbors */
-	MPI_Barrier(MPI_COMM_WORLD);
+	//printf("PASSSSSOU INICIO\n"); -------------------------------------------------------------------
+	/*MPI_Barrier(MPI_COMM_WORLD);
 	timing[4] = MPI_Wtime();
+	printf("Antes \n");
 	index_table_alignment(B);
-	timing[4] = MPI_Wtime() - timing[4];
+	printf("Depois \n");
+	timing[4] = MPI_Wtime() - timing[4];*/
 
 	/* phase 3: indexing: bit-write index */
-	MPI_Barrier(MPI_COMM_WORLD);
+	/*MPI_Barrier(MPI_COMM_WORLD);
 	timing[5] = MPI_Wtime();
 	bits_packing(B);
 	timing[5] = MPI_Wtime() - timing[5];
-	free(membership);
+	free(membership);*/
 
 	/* phase 3: indexing: compress index table*/
-	MPI_Barrier(MPI_COMM_WORLD);
+	/**MPI_Barrier(MPI_COMM_WORLD);
 	timing[6] = MPI_Wtime();
 	compress_index();
-	timing[6] = MPI_Wtime() - timing[6];
+	timing[6] = MPI_Wtime() - timing[6];*/
 
 	/* phase 4: write to file */
 	MPI_Barrier(MPI_COMM_WORLD);
@@ -426,6 +430,8 @@ int main(int argc,char *argv[])
 #endif
 	}
 	timing[7] = MPI_Wtime() - timing[7];
+
+	printf("PASSSSSOU TUDO\n");
 
 	double max_timing[32];
 
@@ -496,23 +502,26 @@ void index_table_alignment(int *B)
 	int i;
 
 	/* adjust number of elements according to boarder */
-
+	printf("AQUI!\n");
 	g_block_adjust(B);
+	printf("depois g_block\n");
 	data_split();
+	printf("Depois data_split\n");
 
 	double t_change_ratio_transfer;
 	if (DEBUG) t_change_ratio_transfer = MPI_Wtime();
-
+	printf("Depois MPI_WTime\n");
 	/* MPI index transfer */
 
 	change_ratio_transfer(&index_num);
-
+	printf("Antes 1ª debug\n");
 	if (DEBUG) t_change_ratio_transfer = MPI_Wtime() - t_change_ratio_transfer;
-
+	printf("Entre os debugs\n");
 	if (DEBUG) MPI_Allreduce(&index_num,&t_g_index_num,1,MPI_INT,MPI_SUM,MPI_COMM_WORLD);
-
+	printf("Depois dos 2 debugs\n");
 	// init meta data for index table blocks. meta data includes number of data points in the block & buffer pointers
 
+	printf("1\n");
 	block_array_size = index_num/block_size;
 	if(index_num%block_size)
 	{
@@ -520,9 +529,10 @@ void index_table_alignment(int *B)
 	}
 
 	block_array = (struct block_element *)malloc(block_array_size*sizeof(struct block_element));
-
+	printf("2\n");
 	for(i=0;i<block_array_size;i++)
 	{
+		printf("2.1\n");
 		block_array[i].start_index = i*block_size;
 		if(((i+1)*block_size)<index_num)
 			block_array[i].data_num = block_size;
@@ -533,6 +543,7 @@ void index_table_alignment(int *B)
 		block_array[i].uncom_buff = NULL;
 		block_array[i].com_buff = NULL;
 	}
+	printf("3\n");
 
 }
 
@@ -2093,7 +2104,7 @@ int simple_grouping_prediction(struct t_center_element *t_center,int total_num,i
 	min_B = 1;
 
 	if(DEBUG && rank==0)
-		printf("B = 1 length = %ld, compressible num = %ld ,incompress = %ld index table  size =  %ld\n",min_length,already_compressed_num,(long long)(g_data_array_row_num - already_compressed_num),(long long)(g_data_array_row_num*1/8));
+		printf("B = 1 length = %lld, compressible num = %d ,incompress = %lld index table  size =  %lld\n",min_length,already_compressed_num,(long long)(g_data_array_row_num - already_compressed_num),(long long)(g_data_array_row_num*1/8));
 
 	// calc the smallest NUMARCK file size
 
@@ -2109,7 +2120,7 @@ int simple_grouping_prediction(struct t_center_element *t_center,int total_num,i
 
 		if(DEBUG && rank==0)
 		{
-			printf("B = %ld length = %ld, compressible num = %ld ,incompress = %ld index table  size =  %ld\n",i,length,compressible_data_num,(g_data_array_row_num - compressible_data_num)*8,(long)(g_data_array_row_num*i/8));
+			printf("B = %d length = %lld, compressible num = %lld ,incompress = %lld index table  size =  %ld\n",i,length,compressible_data_num,(g_data_array_row_num - compressible_data_num)*8,(long)(g_data_array_row_num*i/8));
 		}
 
 
@@ -3405,11 +3416,13 @@ void g_block_adjust(int *B)
 	long i;
 
 	t_block_size = block_length*8/(*B);
-
+	printf("Antes do for\n");
+	printf("%d - 1º for\n",size);
 	for(i=0;i<size-1;i++)
 	{
+		printf("i - %ld\n",i);
 		t_num = g_block_map[i].real_end_index - g_block_map[i].real_start_index + 1;
-
+		printf("%d\n",t_num);
 		c_num = t_num%t_block_size;
 
 		g_block_map[i].real_end_index -= c_num;
@@ -3417,12 +3430,19 @@ void g_block_adjust(int *B)
 		g_block_map[i+1].real_start_index -= c_num;
 	}
 
+	//printf("END = %ld\n",g_block_map->real_end_index);
+	//printf("START = %ld\n",g_block_map->real_start_index);
+	printf("Entre os fors\n");
+	printf("%d - Teste\n",size);
 	for(i=0;i<size;i++)
 	{
 		if(g_block_map[i].real_end_index<g_block_map[i].real_start_index&&rank==0)
 			printf("some MPI process do not have enough data to compress, please use less MPI processes || higher B || smaller block size\n");
+		printf("Antes do Assert\n");
 		assert(g_block_map[i].real_end_index>=g_block_map[i].real_start_index);
+		printf("Depois do Assert\n");
 	}
+	printf("Depois do for\n");
 }
 
 void change_ratio_transfer(int *index_num) /* exchange index with neighbors */

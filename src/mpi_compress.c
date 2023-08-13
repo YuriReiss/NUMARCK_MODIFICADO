@@ -84,7 +84,7 @@ double min_change_ratio = -40.0;
 
 int helper_array[8][6];		//bits operation helper array
 
-int compression_method = 2;		//0:kmeans	1:equal-bin	2:simple-grouping	3:log-bin
+int compression_method = 0;		//0:kmeans	1:equal-bin	2:simple-grouping	3:log-bin
 int index_table_com_flag = 1;		//0:do not compress index table	1:compress index table using zlib
 int cluster_table_reuse = 0;		//1:reuse previous cluster center table if it reduce space	(incompatiable with NUMARCK decompression)
 int cluster_table_can_reuse;		//helper variable
@@ -316,21 +316,9 @@ int main(int argc,char *argv[])
 
 	if(method!=NULL)
 	{
-		if(!strcmp(method,"equal"))
-		{
-			compression_method = 1;
-		}
-		else if(!strcmp(method,"log"))
-		{
-			compression_method = 3;
-		}
 		else if(!strcmp(method,"kmeans"))
 		{
 			compression_method = 0;
-		}
-		else if(!strcmp(method,"topk"))
-		{
-			compression_method = 2;
 		}
 		else
 		{
@@ -1702,19 +1690,6 @@ void binning(int *B, double *E)
 
 		mpi_kmeans(t_change_ratio_array,1,t_change_ratio_array_length,class_num-2,5,t_membership,cluster_centroids,MPI_COMM_WORLD);
 	}
-	else if(compression_method==1) /* equal-width based binning */
-	{
-		mpi_equal_bin(t_change_ratio_array,t_change_ratio_array_length,class_num-2,t_membership,B,E);
-	}
-	else if(compression_method==2) /* top-k binning */
-	{
-		mpi_simple_grouping2(t_change_ratio_array,t_change_ratio_array_length,class_num-2,t_membership,zero_change_ratio_num,B,E);
-	}
-	else if(compression_method==3) /* log based binning */
-	{
-		mpi_log_bin(t_change_ratio_array,t_change_ratio_array_length,class_num-2,t_membership,B,E);
-	}
-
 
 	return;
 

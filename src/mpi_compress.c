@@ -2015,7 +2015,7 @@ void mpi_simple_grouping2(double *t_change_ratio_array,int index,int r_class_num
 	block_size = block_length*8/(*B);
 
 	//memory leak here !! should use relloc   :  fixed   freed several lines before
-	cluster_centroids = (double *)malloc((class_num)*sizeof(double));
+	cluster_centroids = (double *)realloc((class_num)*sizeof(double));
 
 	int t_id;
 

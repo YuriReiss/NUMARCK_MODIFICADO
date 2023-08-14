@@ -1683,11 +1683,7 @@ void binning(int *B, double *E)
 		block_size = block_length*8/(*B);
 
 		// call k-means to get the bin centers
-		MPI_Barrier(MPI_COMM_WORLD);
-		double testeTempo = MPI_Wtime();
-		mpi_kmeans(t_change_ratio_array,1,t_change_ratio_array_length,class_num-2,5,t_membership,cluster_centroids,MPI_COMM_WORLD);
-		printf("teste de tempo %lf",(testeTempo-MPI_Wtime()));
-		
+		mpi_kmeans(t_change_ratio_array,1,t_change_ratio_array_length,class_num-2,5,t_membership,cluster_centroids,MPI_COMM_WORLD);		
 	}
 	else if(compression_method==1) /* equal-width based binning */
 	{
